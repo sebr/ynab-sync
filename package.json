@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "DEBUG='ynab-sync:*' sls invoke local -f sync",
-    "deploy": "sls deploy",
+    "deploy": "sls deploy --stage=dev",
     "deploy-prod": "sls deploy --stage=prod",
     "test": "jest",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"

@@ -11,7 +11,7 @@ package:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
-  s3Bucket: ${self:service:name}-uploads
+  s3Bucket: ${self:service:name}-${self:custom.stage}-uploads
   dynamoThroughputs:
     prod: 1
     default: 1
