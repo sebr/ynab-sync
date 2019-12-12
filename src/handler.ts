@@ -169,9 +169,9 @@ ${res.ignoreCount} transactions ignored`;
 }
 
 async function decryptSecrets(): Promise<Secrets> {
-  const secretId = process.env.SECRETS;
+  const secretId = process.env.SECRET_ID;
   if (!secretId) {
-    return Promise.reject(`No secrets provided`);
+    return Promise.reject(`No SSM secret id provided`);
   }
 
   const secretsManager = new SecretsManager();
