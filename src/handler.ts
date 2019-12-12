@@ -1,4 +1,4 @@
-import KMS from "aws-sdk/clients/kms";
+import SecretsManager from "aws-sdk/clients/secretsmanager";
 import chromium from "chrome-aws-lambda";
 import debug from "debug";
 import "source-map-support/register";
@@ -69,7 +69,9 @@ async function runJob({ account, secrets }: { account: Account; secrets: Secrets
       log(`Transaction debugging: ${url}`);
     }
 
-    const results = await submitTransactions(account, txns, secrets.YNAB_API_TOKEN);
+    const dryRun = true; // fixme
+
+    const results = await submitTransactions(account, txns, secrets.YNAB_API_TOKEN, dryRun);
     return {
       account,
       importedTransactions: results.data.bulk.transaction_ids,
@@ -167,21 +169,21 @@ ${res.ignoreCount} transactions ignored`;
 }
 
 async function decryptSecrets(): Promise<Secrets> {
-  const encryptedSecrets = process.env.SECRETS;
-  if (!encryptedSecrets) {
+  const secretId = process.env.SECRETS;
+  if (!secretId) {
     return Promise.reject(`No secrets provided`);
   }
 
-  const kms = new KMS();
+  const secretsManager = new SecretsManager();
 
-  const decryptedData = await kms
-    .decrypt({
-      CiphertextBlob: new Buffer(encryptedSecrets, "base64")
+  const secrets = await secretsManager
+    .getSecretValue({
+      SecretId: secretId
     })
     .promise();
 
-  const secrets = JSON.parse(String(decryptedData.Plaintext));
-  return secrets;
+  const decryptedSecrets = JSON.parse(String(secrets.SecretString));
+  return decryptedSecrets;
 }
 
 export async function sync(event: any): Promise<SummaryReport> {
