@@ -37,11 +37,10 @@ custom:
           - table: ${self:service}-${self:custom.stage}
             sources: [./seed/accounts.json]
 
-
 provider:
   name: aws
   runtime: nodejs10.x
-  stage: ${opt:stage, 'prod'}
+  stage: ${opt:stage, 'dev'}
   region: ap-southeast-2
   iamRoleStatements:
     - Effect: Allow
@@ -75,7 +74,7 @@ resources:
       Properties:
         BucketName: ${self:custom.s3Bucket}
     YnabSyncDbTable:
-      Type: 'AWS::DynamoDB::Table'
+      Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
         TableName: ${self:service}-${self:custom.stage}
