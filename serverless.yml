@@ -43,10 +43,6 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - KMS:Decrypt
-      Resource: ${self:custom.kmsSecrets.keyArn}
-    - Effect: Allow
-      Action:
         - s3:PutObject
         - s3:PutObjectAcl
       Resource: "arn:aws:s3:::${self:custom.s3Bucket}/*"
