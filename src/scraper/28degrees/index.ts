@@ -22,8 +22,7 @@ class TwentyEightDegreesScraper extends Scraper {
   };
 
   protected async openAccountPage(browser: Browser): Promise<Page> {
-    const username = this.secrets.TWENTY_EIGHT_DEGREES_BANK_USERNAME;
-    const password = this.secrets.TWENTY_EIGHT_DEGREES_BANK_PASSWORD;
+    const { username, password } = this.account;
 
     if (!username || !password) {
       return Promise.reject("No username or password configured");

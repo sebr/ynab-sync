@@ -14,8 +14,8 @@ export default class AnzAccountScraper extends Scraper {
 
   protected async openAccountPage(browser: Browser): Promise<Page> {
     log(`Opening account page: ${this.account.name}`);
-    const username = this.secrets.ANZ_BANK_USERNAME;
-    const password = this.secrets.ANZ_BANK_PASSWORD;
+    const { username, password } = this.account;
+
     if (!username || !password) {
       log(`No credentials`);
       return Promise.reject("No username or password configured");
