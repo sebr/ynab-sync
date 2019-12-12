@@ -1,0 +1,20 @@
+.DS_Store
+.env
+
+coverage
+
+# build dir
+dist
+.build
+.webpack
+
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+.dynamodb
+
+# Seed data
+seed/accounts-data.json

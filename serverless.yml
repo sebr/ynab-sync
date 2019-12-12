@@ -1,0 +1,90 @@
+service:
+  name: ynab-sync
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-kms-secrets
+  - serverless-dynamodb-local
+
+package:
+  excludeDevDependencies: false
+  exclude: ${file(sls-exclude.js):get}
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
+  s3Bucket: ${self:service:name}-uploads
+  dynamoThroughputs:
+    prod: 1
+    default: 1
+  dynamoThroughput: ${self:custom.dynamoThroughputs.${self:custom.stage}, self:custom.dynamoThroughputs.default}
+  # dynamodb-local config
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+      # noStart: true
+    seed:
+      accounts:
+        sources:
+          - table: ${self:service}-${self:custom.stage}
+            sources: [./seed/accounts.json]
+
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'prod'}
+  region: ap-southeast-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - KMS:Decrypt
+      Resource: ${self:custom.kmsSecrets.keyArn}
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:PutObjectAcl
+      Resource: "arn:aws:s3:::${self:custom.s3Bucket}/*"
+  environment:
+    SECRETS: ${self:custom.kmsSecrets.secrets.SECRETS}
+    DYNAMODB_TABLE: ${self:service}-${self:custom.stage}
+    DEBUG: ynab-sync:*
+
+functions:
+  sync:
+    handler: src/handler.sync
+    memorySize: 1024
+    timeout: 300
+    events:
+      - schedule: cron(0 21 * * ? *)
+    environment:
+      BUCKET: ${self:custom.s3Bucket}
+
+resources:
+  Resources:
+    S3BucketOutputs:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3Bucket}
+    YnabSyncDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:service}-${self:custom.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: ${self:custom.dynamoThroughput}
+          WriteCapacityUnits: ${self:custom.dynamoThroughput}

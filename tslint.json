@@ -1,0 +1,17 @@
+{
+  "tslint.enable": true,
+  "defaultSeverity": "error",
+  "extends": ["tslint:latest", "tslint-jest", "tslint-config-prettier"],
+  "jsRules": {},
+  "rules": {
+    "arrow-parens": false,
+    "interface-name": false,
+    "no-console": false,
+    "no-implicit-dependencies": [true, "dev"],
+    "no-submodule-imports": false,
+    "object-literal-key-quotes": false,
+    "object-literal-sort-keys": false,
+    "trailing-comma": false
+  },
+  "rulesDirectory": []
+}
