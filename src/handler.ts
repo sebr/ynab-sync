@@ -174,16 +174,22 @@ async function decryptSecrets(): Promise<Secrets> {
     return Promise.reject(`No SSM secret id provided`);
   }
 
-  const secretsManager = new SecretsManager();
+  const secretsManager = new SecretsManager({
+    region: process.env.AWS_REGION || "ap-southeast-2"
+  });
 
-  const secrets = await secretsManager
-    .getSecretValue({
-      SecretId: secretId
-    })
-    .promise();
+  try {
+    const data = await secretsManager
+      .getSecretValue({
+        SecretId: secretId
+      })
+      .promise();
 
-  const decryptedSecrets = JSON.parse(String(secrets.SecretString));
-  return decryptedSecrets;
+    return JSON.parse(String(data.SecretString));
+  } catch (err) {
+    console.log(JSON.stringify(err));
+    throw err;
+  }
 }
 
 export async function sync(event: any): Promise<SummaryReport> {
@@ -195,4 +201,12 @@ export async function sync(event: any): Promise<SummaryReport> {
     console.log(`Filter accounts with condition: ${JSON.stringify(event)}`);
   }
   return processAccounts({ accounts, secrets });
+}
+
+export async function init() {
+  console.log(`region: ${process.env.AWS_REGION}`);
+  const secrets = await decryptSecrets();
+  console.log(secrets);
+  const accounts = await getAccounts(secrets);
+  console.log(accounts);
 }
