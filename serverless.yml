@@ -52,7 +52,7 @@ provider:
       Resource:
         Fn::Join:
           - ""
-          - - "arn:aws:ssm:"
+          - - "arn:aws:secretsmanager:"
             - Ref: AWS::Region
             - ":"
             - Ref: AWS::AccountId
