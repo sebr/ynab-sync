@@ -57,6 +57,17 @@ provider:
             - ":"
             - Ref: AWS::AccountId
             - ":secret:ynab-sync/${self:custom.stage}/*"
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "Fn::GetAtt": [YnabSyncDbTable, Arn]
   environment:
     SECRET_ID: ynab-sync/${self:custom.stage}/secrets
     DYNAMODB_TABLE: ${self:service}-${self:custom.stage}
