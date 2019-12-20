@@ -9,5 +9,10 @@
     "password": "encrypted password",
     "selector": "DOM selector to query (optional)",
     "debug": "true/false (optional)"
+  },
+  {
+    "type": "secrets",
+    "id": "secrets",
+    "value": "encrypted blob with ssm"
   }
 ]

@@ -63,4 +63,27 @@ const getAccounts = async (secrets: Secrets): Promise<Account[]> => {
   return Promise.resolve(accounts);
 };
 
+// const loadAccounts = async (accounts: Account[]) => {
+//   const TableName = process.env.DYNAMODB_TABLE;
+//   if (!TableName) {
+//     return Promise.reject("No dynamodb table name provided");
+//   }
+
+//   const params = {
+//     TableName,
+//     FilterExpression: "#type = :value",
+//     ExpressionAttributeNames: {
+//       "#type": "type"
+//     },
+//     ExpressionAttributeValues: {
+//       ":value": { S: "account" }
+//     }
+//   };
+
+//   const result = await dynamodb
+//     .client()
+//     .put(params)
+//     .promise();
+// }
+
 export { getAccounts };

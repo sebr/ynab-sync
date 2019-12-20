@@ -28,7 +28,7 @@ custom:
       migrate: true
       seed: true
       convertEmptyValues: true
-      # noStart: true
+      noStart: true
     seed:
       accounts:
         sources:
