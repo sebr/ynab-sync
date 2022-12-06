@@ -21,7 +21,7 @@
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
     "puppeteer-core": "^2.0.0",
-    "qs": "^6.9.1",
+    "qs": "^6.9.7",
     "source-map-support": "^0.5.16",
     "ynab": "1.17.0"
   },
